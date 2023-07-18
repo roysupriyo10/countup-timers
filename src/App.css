@@ -1,0 +1,19 @@
+.main-frame {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.timers__control {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.timers__timer {
+  text-align: center;
+  display: grid;
+  grid-template-columns: 2em 8em auto 5em 5em;
+  gap: 1em;
+  align-items: center;
+}
+
