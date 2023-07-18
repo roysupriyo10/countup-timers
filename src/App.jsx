@@ -9,13 +9,15 @@ function App() {
 
   const currentTimestampInterval = setInterval(() => {
     setCurrentTimestamp(Date.now())
-  }, 100);
+  }, 10);
 
   const [ timers, setTimers ] = createStore(JSON.parse(localStorage.getItem('timers')) ?? [
     {
-      timeReference: 0,
+      startTime: 0,
+      stopTime: 0,
       note: '',
-      activated: false
+      activated: false,
+      stopped: false
     }
   ])
 
@@ -38,9 +40,11 @@ function App() {
               return [
                 ...previousState,
                 {
-                  timeReference: 0,
+                  startTime: 0,
+                  stopTime: 0,
                   note: '',
-                  activated: false
+                  activated: false,
+                  stopped: false
                 }
               ]
             })
@@ -51,9 +55,14 @@ function App() {
         class='timers__timer'
       >
         <h4>Sl</h4>
+        <h4>~</h4>
         <h4>Count</h4>
         <h4>Notes</h4>
-        <h4>Setter</h4>
+        <h4
+          style={{
+            "grid-column": "5 / 7"
+          }}
+        >Control</h4>
         <h4>Delete</h4>
       </div>
       {timers.length && <For each={timers}>{
@@ -62,13 +71,43 @@ function App() {
             <div
               class='timers__timer'
             >
-              <h4>{index() + 1}</h4>
-              <h4>{timer.activated ? formatCount(currentTimestamp() - timer.timeReference) : '-'}</h4>
+              <h4
+                style={{
+                  color: !timer.stopped ? '#059680' : '#f23645'
+                }}
+              >{index() + 1}</h4>
+              <input
+                type="datetime-local"
+                name={`select-time-${index()}`}
+                onBlur={e => {
+                setTimers([index()], previousState => {
+                  return ({
+                    ...previousState,
+                    startTime: new Date(e.target.value).getTime()
+                  })
+                })
+              }}/>
+              <h4
+                onClick={() => {
+                  showTimeSelector(true)
+                }}
+              >{
+                timer.activated
+                ?
+                !timer.stopped
+                ?
+                formatCount(currentTimestamp() - timer.startTime)
+                :
+                formatCount(timer.stopTime - timer.startTime)
+                :
+                '-'
+              }</h4>
               <input
                 type="text"
                 name={`comment-${index()}`}
                 value={timer.note}
                 onInput={e => {
+                  console.log(e.target.value)
                   setTimers([index()], previousState => {
                     return ({
                       ...previousState,
@@ -83,14 +122,28 @@ function App() {
                     setTimers([index()], previousState => {
                       return ({
                         ...previousState,
+                        stopped: false,
                         activated: true,
-                        timeReference: Date.now()
+                        startTime: Date.now()
                       })
                     })
                   }
                 }
               >
                 Set
+              </button>
+              <button
+                onClick={() => {
+                  setTimers([index()], previousState => {
+                    return ({
+                      ...previousState,
+                      stopTime: Date.now(),
+                      stopped: true
+                    })
+                  })
+                }}
+              >
+                Stop
               </button>
               <button
                 onClick={() => {

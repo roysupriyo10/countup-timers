@@ -12,7 +12,7 @@
 .timers__timer {
   text-align: center;
   display: grid;
-  grid-template-columns: 2em 8em auto 5em 5em;
+  grid-template-columns: 2em 2em 8em auto 5em 5em 5em;
   gap: 1em;
   align-items: center;
 }
